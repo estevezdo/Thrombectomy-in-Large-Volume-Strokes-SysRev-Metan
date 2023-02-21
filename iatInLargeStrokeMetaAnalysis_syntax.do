@@ -3,6 +3,7 @@
 *Authors: Dagoberto Estevez-Ordonez, MD and Nicholas MB Laskay, MD
 *Purpose: Meta-analysis of RCT
 *Date: 2/19/2023
+*STATA17
 *----------------------------------------------------------------*
 
 capture log close
