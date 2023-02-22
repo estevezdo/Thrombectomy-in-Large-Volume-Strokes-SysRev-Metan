@@ -55,6 +55,40 @@ meta bias, egger random(reml)
 
 meta galbraith, random(reml)
 
+*--------------------*
+*Sensitivity Analysis*
+*--------------------*
+preserve 
+clear
+frame reset
+
+use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+
+meta set logess loglci loguci, civartolerance(1e-2) studylabel(study) studysize(number) eslabel(Odds Ratio)
+meta summarize, random(reml) eform(Odds Ratio)
+
+display exp(r(theta))
+
+display r(tau2)
+*tau2 is 0.01485416 or 1.48e-2
+
+local variances 1e-5 1e-4 1.5e-3 1.5e-2 1e-1 2e-1 5e-1 8e-1
+ 
+frame create sens tau2 or p
+
+frames dir
+ 
+ foreach t2 of local variances{
+ 	meta summarize, tau2(`t2')
+	local or = exp(r(theta))
+	frame post sens (`r(tau2)') (`or') (`r(p)')
+	}
+	
+frame sens: scatter or tau2, name(or, replace)
+frame sens: scatter p tau2, name(p, replace)
+
+restore 
+
 ************************************
 **Functional Independence (mRs0-2)**
 ************************************
@@ -66,6 +100,41 @@ meta summarize, random(reml) eform(Risk ratio)
 
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
+*--------------------*
+*Sensitivity Analysis*
+*--------------------*
+
+preserve 
+clear
+frame reset
+
+use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+meta esize iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1, esize(lnrratio) studylabel(study) eslabel(Risk ratio)
+meta summarize, random(reml) eform(Risk ratio)
+
+display exp(r(theta))
+
+display r(tau2)
+*tau2 is 2.852e-08
+
+local variances 2.852e-08 1.5e-7 1e-5 1e-4 2e-4 5e-4 7e-4 1e-3 1.5e-3
+ 
+frame create sens tau2 rr p
+
+frames dir
+ 
+ foreach t2 of local variances{
+ 	meta summarize, tau2(`t2')
+	local rr = exp(r(theta))
+	frame post sens (`r(tau2)') (`rr') (`r(p)')
+	}
+	
+frame sens: scatter rr tau2, name(rr, replace)
+frame sens: scatter p tau2, name(p, replace)
+
+restore
+
+
 ***********************************
 **Independent Ambulation (mRs0-3)**
 ***********************************
@@ -76,6 +145,41 @@ meta esize iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2, esize(lnrrat
 meta summarize, random(reml) eform(Risk ratio)
 
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+*--------------------*
+*Sensitivity Analysis*
+*--------------------*
+
+preserve 
+clear
+frame reset
+
+use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+
+meta esize iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2, esize(lnrratio) studylabel(study) eslabel(Risk ratio)
+meta summarize, random(reml) eform(Risk ratio)
+
+display exp(r(theta))
+
+display r(tau2)
+*tau2 is 0.0459
+
+local variances 1e-5 1e-4 1.5e-3 4.6e-2 1e-1 2e-1 5e-1 8e-1
+ 
+frame create sens tau2 rr p
+
+frames dir
+ 
+ foreach t2 of local variances{
+ 	meta summarize, tau2(`t2')
+	local rr = exp(r(theta))
+	frame post sens (`r(tau2)') (`rr') (`r(p)')
+	}
+	
+frame sens: scatter rr tau2, name(rr, replace)
+frame sens: scatter p tau2, name(p, replace)
+
+restore
 
 
 *******************
