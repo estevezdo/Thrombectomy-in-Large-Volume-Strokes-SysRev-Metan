@@ -139,6 +139,5 @@ meta summarize, random(reml) subgroup(subgroup) eform(Odds ratio)
 
 meta forestplot, random(reml) subgroup(subgroup)  noomarker  noohetstats noohomtest noosigtest
 
-meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker nullrefline xscale(range(.25 4)) xlabel(#5) noomarker  noohetstats noohomtest noosigtest nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
-
+meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker nullrefline xscale(range(.25 4)) meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker nullrefline xscale(range(.25 4)) xlabel(#5) noomarker  noohetstats noohomtest noosigtest nogwhomtests nogbhomtests nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 log close
