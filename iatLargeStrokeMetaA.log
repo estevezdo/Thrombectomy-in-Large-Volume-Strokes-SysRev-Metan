@@ -1,0 +1,1748 @@
+----------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Throm
+> bectomy SysRev/iatLargeStrokeMetaA.log
+  log type:  text
+ opened on:  23 Feb 2023, 14:34:12
+
+. 
+. *----------------------------------------------------------------*
+. *Name: IAT in Large Stroke Meta-analysis of RCT
+. *Author: Dagoberto Estevez-Ordonez, MD and Nicholas MB Laskay, MD
+. *Purpose: Meta-analysis of RCT
+. *----------------------------------------------------------------*
+. 
+. ***************************************************
+. ***************INPUT DATA**************************
+. ***************************************************
+. import excel "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Th
+> rombectomy SysRev/iatLargeThrombectomyMetaAnalysis.xlsx", sheet("main outcomes")
+>  firstrow
+(30 vars, 3 obs)
+
+. 
+. gen logess= log(essOR)
+
+. gen loguci= log(uciOR)
+
+. gen loglci= log(lciOR)
+
+. 
+. save "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombecto
+> my SysRev/iatLargeThrombectomyMetaAnalysis.dta", replace
+file /Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan
+    Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta saved
+
+. 
+. ***************************************************
+. ******************ANALYSIS*************************
+. ***************************************************
+. 
+. 
+. ****************
+. **Shift in mRs**
+. ****************
+. *setup
+. meta set logess loglci loguci, civartolerance(1e-2) studylabel(study) studysize(
+> number) eslabel(Odds Ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: number
+
+       Effect size
+              Type: <generic>
+             Label: Odds Ratio
+          Variable: logess
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%, controlled by level()
+           User CI: [loglci, loguci]
+     User CI level: 95%, controlled by civarlevel()
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. *meta analysis
+. meta summarize, random(reml) eform(Odds Ratio)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0149
+                                                    I2 (%) =   42.84
+                                                        H2 =    1.75
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          2.420       1.460       4.011     14.37
+    Sarraj et al. |          1.510       1.203       1.895     41.30
+       Huo et al. |          1.370       1.110       1.690     44.33
+------------------+-------------------------------------------------
+       exp(theta) |          1.548       1.252       1.913
+--------------------------------------------------------------------
+Test of theta = 0: z = 4.04                      Prob > |z| = 0.0001
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+.00005322
+
+. display r(p)*7
+.00037256
+
+. 
+. meta forestplot, random(reml) eform(Odds Ratio) insidemarker nullrefline noohomt
+> est xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical trea
+> tment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. 
+. *publication. bias
+. 
+. meta funnelplot, random(reml)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+              Model: Random effects
+             Method: REML
+
+. 
+. meta summarize, random(reml) eform(Odds Ratio)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0149
+                                                    I2 (%) =   42.84
+                                                        H2 =    1.75
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          2.420       1.460       4.011     14.37
+    Sarraj et al. |          1.510       1.203       1.895     41.30
+       Huo et al. |          1.370       1.110       1.690     44.33
+------------------+-------------------------------------------------
+       exp(theta) |          1.548       1.252       1.913
+--------------------------------------------------------------------
+Test of theta = 0: z = 4.04                      Prob > |z| = 0.0001
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+. display r(theta)
+.43676217
+
+. scalar theta = r(theta)
+
+. meta summarize, random(reml) eform(Odds Ratio) nostudies
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                               Number of studies =      3
+Random-effects model                                Heterogeneity:
+Method: REML                                                    tau2 =  0.0149
+                                                              I2 (%) =   42.84
+                                                                  H2 =    1.75
+
+------------------------------------------------------------------------------
+             |    Estimate    Std. err.     z    P>|z|    [95% conf. interval]
+-------------+----------------------------------------------------------------
+  exp(theta) |    1.547688     .167278    4.04   0.000    1.252228    1.912861
+------------------------------------------------------------------------------
+Test of homogeneity: Q = chi2(2) = 4.16                      Prob > Q = 0.1248
+
+. display r(theta)
+.43676217
+
+. 
+. twoway function theta-1.96*x, horizontal range(0 0.258) || function theta+1.96*x
+> , horizontal range(0 0.258)
+
+. local opts horizontal range(0 0.258) lpattern(dash) lcolor("red") legend(order(1
+>  2 3 4 5 6) label(6 "95% pseudo CI"))
+
+. meta funnel, random(reml) contours(1 5 10) addplot(function theta-1.96*x, `opts'
+>  || function theta+1.96*x, `opts')
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+              Model: Random effects
+             Method: REML
+
+. 
+. 
+. meta bias, egger random(reml)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+
+Regression-based Egger test for small-study effects
+Random-effects model
+Method: REML
+
+H0: beta1 = 0; no small-study effects
+            beta1 =      3.65
+      SE of beta1 =     1.830
+                z =      2.00
+       Prob > |z| =    0.0459
+
+. 
+. *heterogeneity plot
+. 
+. meta galbraith, random(reml)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+              Model: Random effects
+             Method: REML
+
+. 
+. *--------------------*
+. *Sensitivity Analysis*
+. *--------------------*
+. preserve 
+
+. clear
+
+. frame reset
+
+. 
+. use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectom
+> y SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+
+. 
+. meta set logess loglci loguci, civartolerance(1e-2) studylabel(study) studysize(
+> number) eslabel(Odds Ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: number
+
+       Effect size
+              Type: <generic>
+             Label: Odds Ratio
+          Variable: logess
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%, controlled by level()
+           User CI: [loglci, loguci]
+     User CI level: 95%, controlled by civarlevel()
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. meta summarize, random(reml) eform(Odds Ratio)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0149
+                                                    I2 (%) =   42.84
+                                                        H2 =    1.75
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          2.420       1.460       4.011     14.37
+    Sarraj et al. |          1.510       1.203       1.895     41.30
+       Huo et al. |          1.370       1.110       1.690     44.33
+------------------+-------------------------------------------------
+       exp(theta) |          1.548       1.252       1.913
+--------------------------------------------------------------------
+Test of theta = 0: z = 4.04                      Prob > |z| = 0.0001
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+. 
+. display exp(r(theta))
+1.5476879
+
+. 
+. display r(tau2)
+.01485416
+
+. *tau2 is 0.01485416 or 1.48e-2
+. 
+. local variances 1e-5 1e-4 1.5e-3 1.5e-2 1e-1 2e-1 5e-1 8e-1
+
+.  
+. frame create sens tau2 or p
+
+. 
+. frames dir
+* default  3 x 41; iatLargeThrombectomyMetaAnalysis.dta
+* sens     0 x 3
+
+Note: Frames marked with * contain unsaved data.
+
+.  
+.  foreach t2 of local variances{
+  2.         meta summarize, tau2(`t2')
+  3.         local or = exp(r(theta))
+  4.         frame post sens (`r(tau2)') (`or') (`r(p)')
+  5.         }
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0000
+                                                    I2 (%) =    0.05
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.404       0.257       0.552
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.37                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0001
+                                                    I2 (%) =    0.50
+                                                        H2 =    1.01
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.405       0.257       0.553
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.36                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0015
+                                                    I2 (%) =    7.04
+                                                        H2 =    1.08
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.409       0.253       0.564
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.15                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0150
+                                                    I2 (%) =   43.08
+                                                        H2 =    1.76
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.437       0.225       0.649
+--------------------------------------------------------------------
+Test of theta = 0: z = 4.03                      Prob > |z| = 0.0001
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.1000
+                                                    I2 (%) =   83.46
+                                                        H2 =    6.05
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.495       0.093       0.896
+--------------------------------------------------------------------
+Test of theta = 0: z = 2.41                      Prob > |z| = 0.0159
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.2000
+                                                    I2 (%) =   90.98
+                                                        H2 =   11.09
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.512      -0.029       1.052
+--------------------------------------------------------------------
+Test of theta = 0: z = 1.86                      Prob > |z| = 0.0634
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.5000
+                                                    I2 (%) =   96.19
+                                                        H2 =   26.23
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.525      -0.298       1.349
+--------------------------------------------------------------------
+Test of theta = 0: z = 1.25                      Prob > |z| = 0.2109
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.8000
+                                                    I2 (%) =   97.58
+                                                        H2 =   41.37
+
+--------------------------------------------------------------------
+            Study |     Odds Ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.884       0.379       1.389     14.37
+    Sarraj et al. |          0.412       0.185       0.639     41.30
+       Huo et al. |          0.315       0.105       0.525     44.33
+------------------+-------------------------------------------------
+            theta |          0.530      -0.501       1.560
+--------------------------------------------------------------------
+Test of theta = 0: z = 1.01                      Prob > |z| = 0.3140
+Test of homogeneity: Q = chi2(2) = 4.16            Prob > Q = 0.1248
+
+.         
+. frame sens: scatter or tau2, name(or, replace)
+
+. frame sens: scatter p tau2, name(p, replace)
+
+. 
+. restore 
+
+. 
+. ************************************
+. **Functional Independence (mRs0-2)**
+. ************************************
+. 
+. *meta analysis
+. meta esize iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1, esize(lnrrat
+> io) studylabel(study) eslabel(Risk ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0000
+                                                    I2 (%) =    0.00
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          1.785       0.783       4.068     14.77
+    Sarraj et al. |          2.898       1.561       5.380     26.18
+       Huo et al. |          2.596       1.720       3.919     59.05
+------------------+-------------------------------------------------
+       exp(theta) |          2.528       1.842       3.470
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.74                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+9.268e-09
+
+. display r(p)*7
+6.488e-08
+
+. 
+. meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomt
+> est xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical trea
+> tment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. 
+. 
+. *--------------------*
+. *Sensitivity Analysis*
+. *--------------------*
+. 
+. preserve 
+
+. clear
+
+. frame reset
+
+. 
+. use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectom
+> y SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+
+. meta esize iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1, esize(lnrrat
+> io) studylabel(study) eslabel(Risk ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0000
+                                                    I2 (%) =    0.00
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          1.785       0.783       4.068     14.77
+    Sarraj et al. |          2.898       1.561       5.380     26.18
+       Huo et al. |          2.596       1.720       3.919     59.05
+------------------+-------------------------------------------------
+       exp(theta) |          2.528       1.842       3.470
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.74                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+. 
+. display exp(r(theta))
+2.5282855
+
+. 
+. display r(tau2)
+2.852e-08
+
+. *tau2 is 2.852e-08
+. 
+. local variances 2.852e-08 1.5e-7 1e-5 1e-4 2e-4 5e-4 7e-4 1e-3 1.5e-3
+
+.  
+. frame create sens tau2 rr p
+
+. 
+. frames dir
+* default  3 x 41; iatLargeThrombectomyMetaAnalysis.dta
+* sens     0 x 3
+
+Note: Frames marked with * contain unsaved data.
+
+.  
+.  foreach t2 of local variances{
+  2.         meta summarize, tau2(`t2')
+  3.         local rr = exp(r(theta))
+  4.         frame post sens (`r(tau2)') (`rr') (`r(p)')
+  5.         }
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0000
+                                                    I2 (%) =    0.00
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.928       0.611       1.244
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.74                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0000
+                                                    I2 (%) =    0.00
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.928       0.611       1.244
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.74                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0000
+                                                    I2 (%) =    0.01
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.928       0.611       1.244
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.74                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0001
+                                                    I2 (%) =    0.11
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.927       0.611       1.244
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.74                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0002
+                                                    I2 (%) =    0.21
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.927       0.610       1.245
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.73                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0005
+                                                    I2 (%) =    0.53
+                                                        H2 =    1.01
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.927       0.609       1.245
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.72                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0007
+                                                    I2 (%) =    0.75
+                                                        H2 =    1.01
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.927       0.609       1.246
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.71                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0010
+                                                    I2 (%) =    1.06
+                                                        H2 =    1.01
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.927       0.608       1.246
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.69                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0015
+                                                    I2 (%) =    1.59
+                                                        H2 =    1.02
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.579      -0.244       1.403     14.77
+    Sarraj et al. |          1.064       0.446       1.683     26.18
+       Huo et al. |          0.954       0.542       1.366     59.05
+------------------+-------------------------------------------------
+            theta |          0.927       0.606       1.247
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.67                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 0.89            Prob > Q = 0.6410
+
+.         
+. frame sens: scatter rr tau2, name(rr, replace)
+
+. frame sens: scatter p tau2, name(p, replace)
+
+. 
+. restore
+
+. 
+. ***********************************
+. **Independent Ambulation (mRs0-3)**
+. ***********************************
+. 
+. *meta analysis
+. meta esize iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2, esize(lnrrat
+> io) studylabel(study) eslabel(Risk ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0459
+                                                    I2 (%) =   56.80
+                                                        H2 =    2.31
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          2.432       1.354       4.370     20.22
+    Sarraj et al. |          2.023       1.404       2.914     33.95
+       Huo et al. |          1.409       1.119       1.773     45.83
+------------------+-------------------------------------------------
+       exp(theta) |          1.779       1.286       2.460
+--------------------------------------------------------------------
+Test of theta = 0: z = 3.48                      Prob > |z| = 0.0005
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+.00049681
+
+. display r(p)*7
+.00347765
+
+. 
+. meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomt
+> est xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical trea
+> tment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. 
+. *--------------------*
+. *Sensitivity Analysis*
+. *--------------------*
+. 
+. preserve 
+
+. clear
+
+. frame reset
+
+. 
+. use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectom
+> y SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+
+. 
+. meta esize iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2, esize(lnrrat
+> io) studylabel(study) eslabel(Risk ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0459
+                                                    I2 (%) =   56.80
+                                                        H2 =    2.31
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          2.432       1.354       4.370     20.22
+    Sarraj et al. |          2.023       1.404       2.914     33.95
+       Huo et al. |          1.409       1.119       1.773     45.83
+------------------+-------------------------------------------------
+       exp(theta) |          1.779       1.286       2.460
+--------------------------------------------------------------------
+Test of theta = 0: z = 3.48                      Prob > |z| = 0.0005
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+. 
+. display exp(r(theta))
+1.7788149
+
+. 
+. display r(tau2)
+.04588495
+
+. *tau2 is 0.0459
+. 
+. local variances 1e-5 1e-4 1.5e-3 4.6e-2 1e-1 2e-1 5e-1 8e-1
+
+.  
+. frame create sens tau2 rr p
+
+. 
+. frames dir
+* default  3 x 41; iatLargeThrombectomyMetaAnalysis.dta
+* sens     0 x 3
+
+Note: Frames marked with * contain unsaved data.
+
+.  
+.  foreach t2 of local variances{
+  2.         meta summarize, tau2(`t2')
+  3.         local rr = exp(r(theta))
+  4.         frame post sens (`r(tau2)') (`rr') (`r(p)')
+  5.         }
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0000
+                                                    I2 (%) =    0.03
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.490       0.305       0.675
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.19                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0001
+                                                    I2 (%) =    0.29
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.490       0.305       0.676
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.19                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0015
+                                                    I2 (%) =    4.12
+                                                        H2 =    1.04
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.497       0.304       0.689
+--------------------------------------------------------------------
+Test of theta = 0: z = 5.06                      Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.0460
+                                                    I2 (%) =   56.86
+                                                        H2 =    2.32
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.576       0.252       0.900
+--------------------------------------------------------------------
+Test of theta = 0: z = 3.48                      Prob > |z| = 0.0005
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.1000
+                                                    I2 (%) =   74.13
+                                                        H2 =    3.87
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.602       0.179       1.025
+--------------------------------------------------------------------
+Test of theta = 0: z = 2.79                      Prob > |z| = 0.0053
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.2000
+                                                    I2 (%) =   85.14
+                                                        H2 =    6.73
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.619       0.063       1.176
+--------------------------------------------------------------------
+Test of theta = 0: z = 2.18                      Prob > |z| = 0.0292
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.5000
+                                                    I2 (%) =   93.48
+                                                        H2 =   15.33
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.633      -0.201       1.468
+--------------------------------------------------------------------
+Test of theta = 0: z = 1.49                      Prob > |z| = 0.1369
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Sensitivity meta-analysis summary         Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: User-specified tau2                           tau2 =  0.8000
+                                                    I2 (%) =   95.82
+                                                        H2 =   23.92
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.889       0.303       1.475     20.22
+    Sarraj et al. |          0.704       0.339       1.069     33.95
+       Huo et al. |          0.343       0.112       0.573     45.83
+------------------+-------------------------------------------------
+            theta |          0.638      -0.402       1.678
+--------------------------------------------------------------------
+Test of theta = 0: z = 1.20                      Prob > |z| = 0.2295
+Test of homogeneity: Q = chi2(2) = 4.68            Prob > Q = 0.0964
+
+.         
+. frame sens: scatter rr tau2, name(rr, replace)
+
+. frame sens: scatter p tau2, name(p, replace)
+
+. 
+. restore
+
+. 
+. 
+. *******************
+. **Safety Outcomes**
+. *******************
+. 
+. *symptomatic ICH
+. meta esize iatICH_sym iatNoICH_sym medicalICH_sym medicalNoICH_sypm, esize(lnrra
+> tio) studylabel(study) eslabel(Risk ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatICH_sym iatNoICH_sym medicalICH_sym medicalNoICH_sypm
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0000
+                                                    I2 (%) =    0.00
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          1.836       0.637       5.288     40.55
+    Sarraj et al. |          0.489       0.045       5.341      7.94
+       Huo et al. |          2.283       0.893       5.835     51.51
+------------------+-------------------------------------------------
+       exp(theta) |          1.849       0.943       3.627
+--------------------------------------------------------------------
+Test of theta = 0: z = 1.79                      Prob > |z| = 0.0737
+Test of homogeneity: Q = chi2(2) = 1.38            Prob > Q = 0.5008
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+.07367762
+
+. display r(p)*7
+.51574332
+
+. 
+. meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomt
+> est xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical trea
+> tment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. *Any ICH
+. meta esize iatAnyICH iatNoAnyICH medicalAnyICH medicalNoAnyICH, esize(lnrratio) 
+> studylabel(study) eslabel(Risk ratio)
+(1 missing value generated)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 2
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatAnyICH iatNoAnyICH medicalAnyICH medicalNoAnyICH
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      2
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0641
+                                                    I2 (%) =   70.22
+                                                        H2 =    3.36
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          1.849       1.326       2.577     49.18
+       Huo et al. |          2.834       2.070       3.881     50.82
+------------------+-------------------------------------------------
+       exp(theta) |          2.297       1.511       3.492
+--------------------------------------------------------------------
+Test of theta = 0: z = 3.89                      Prob > |z| = 0.0001
+Test of homogeneity: Q = chi2(1) = 3.36            Prob > Q = 0.0669
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+.00009906
+
+. display r(p)*7
+.00069342
+
+. 
+. meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomt
+> est xscale(range(.25 4)) xlabel(#6) nullrefline(favorsleft("Favors medical treat
+> ment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. *Death at 90 Days
+. meta esize iatDeath90 iatNoDeath90 medicalDeath90 medicalNoDeath90, esize(lnrrat
+> io) studylabel(study) eslabel(Risk ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 3
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatDeath90 iatNoDeath90 medicalDeath90 medicalNoDeath90
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      3
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.0000
+                                                    I2 (%) =    0.00
+                                                        H2 =    1.00
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.765       0.443       1.320     12.89
+    Sarraj et al. |          0.936       0.723       1.213     57.26
+       Huo et al. |          1.087       0.760       1.555     29.85
+------------------+-------------------------------------------------
+       exp(theta) |          0.954       0.784       1.160
+--------------------------------------------------------------------
+Test of theta = 0: z = -0.47                     Prob > |z| = 0.6353
+Test of homogeneity: Q = chi2(2) = 1.16            Prob > Q = 0.5601
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+.63531152
+
+. display r(p)*7
+4.4471807
+
+. 
+. meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomt
+> est xscale(range(.25 4)) xlabel(#6) nullrefline(favorsleft("Favors medical treat
+> ment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. *Decompressive Hemicraniectomy
+. meta esize iatDHC iatNoDHC medicalDHC medicalNoDHC, esize(lnrratio) studylabel(s
+> tudy) eslabel(Risk ratio)
+(1 missing value generated)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 2
+       Study label: study
+        Study size: _meta_studysize
+      Summary data: iatDHC iatNoDHC medicalDHC medicalNoDHC
+
+       Effect size
+              Type: lnrratio
+             Label: Risk ratio
+          Variable: _meta_es
+   Zero-cells adj.: None; no zero cells
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. meta summarize, random(reml) eform(Risk ratio)
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+Meta-analysis summary                     Number of studies =      2
+Random-effects model                      Heterogeneity:
+Method: REML                                          tau2 =  0.3863
+                                                    I2 (%) =   70.28
+                                                        H2 =    3.37
+
+--------------------------------------------------------------------
+            Study |     Risk ratio    [95% conf. interval]  % weight
+------------------+-------------------------------------------------
+    Yoshimura ..  |          0.729       0.340       1.563     51.06
+       Huo et al. |          2.079       0.916       4.720     48.94
+------------------+-------------------------------------------------
+       exp(theta) |          1.217       0.436       3.400
+--------------------------------------------------------------------
+Test of theta = 0: z = 0.37                      Prob > |z| = 0.7079
+Test of homogeneity: Q = chi2(1) = 3.37            Prob > Q = 0.0666
+
+. 
+. *bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outc
+> omes)
+. display r(p)
+.70786319
+
+. display r(p)*7
+4.9550423
+
+. 
+. meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomt
+> est xscale(range(.25 4)) xlabel(#6) nullrefline(favorsleft("Favors medical treat
+> ment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Risk ratio
+        Effect size: _meta_es
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. *-------------------*
+. **Subgroup Analysis**
+. *-------------------*
+. 
+. clear
+
+. 
+. import excel "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Th
+> rombectomy SysRev/iatLargeThrombectomyMetaAnalysis.xlsx", sheet("subgroup") firs
+> trow
+(7 vars, 45 obs)
+
+. 
+. drop if subgroup==.
+(28 observations deleted)
+
+. 
+. label define subgroup_ 1 "Time from stroke onset to randomization <6 hours" 2 "T
+> ime from stroke onset to randomization ≥6 hours" 3 "ICA" 4 "MCA" 5 "Core Volume 
+> <70 mL" 6 "Core Volume ≥70 mL" 7 "ASPECTS <3" 8 "ASPECTS ≥3"
+
+. label values subgroup subgroup_
+
+. 
+. gen logess= log(essOR)
+
+. gen loguci= log(uciOR)
+
+. gen loglci= log(lciOR)
+
+. 
+. save "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombecto
+> my SysRev/iatLargeThrombectomyMetaAnalysis_subgroup.dta", replace
+file /Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan
+    Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis_subgroup.dta saved
+
+. 
+. *setup
+. meta set logess loglci loguci, civartolerance(1e-1) studylabel(study) studysize(
+> number) eslabel(Odds Ratio)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies: 17
+       Study label: study
+        Study size: number
+
+       Effect size
+              Type: <generic>
+             Label: Odds Ratio
+          Variable: logess
+
+         Precision
+         Std. err.: _meta_se
+                CI: [_meta_cil, _meta_ciu]
+          CI level: 95%, controlled by level()
+           User CI: [loglci, loguci]
+     User CI level: 95%, controlled by civarlevel()
+
+  Model and method
+             Model: Random effects
+            Method: REML
+
+. 
+. *meta analysis 
+. meta summarize, random(reml) subgroup(subgroup) eform(Odds ratio)
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+Subgroup meta-analysis summary                       Number of studies =     17
+Random-effects model
+Method: REML 
+Group: subgroup
+
+-------------------------------------------------------------------------------
+                       Study |     Odds ratio    [95% conf. interval]  % weight
+-----------------------------+-------------------------------------------------
+Group: Time from stroke ons~m|
+                  Huo et al. |          1.150       0.806       1.642      4.60
+               Sarraj et al. |          1.630       1.085       2.449      3.51
+                             |
+                  exp(theta) |          1.349       0.960       1.897
+-----------------------------+-------------------------------------------------
+Group: Time from stroke ons~m|
+                  Huo et al. |          1.530       1.170       2.000      8.10
+               Sarraj et al. |          1.490       1.142       1.944      8.23
+                             |
+                  exp(theta) |          1.510       1.250       1.823
+-----------------------------+-------------------------------------------------
+Group: ICA                   |
+                  Huo et al. |          1.420       0.997       2.023      4.64
+               Sarraj et al. |          1.310       0.929       1.848      4.92
+                             |
+                  exp(theta) |          1.362       1.064       1.743
+-----------------------------+-------------------------------------------------
+Group: MCA                   |
+                  Huo et al. |          1.330       1.021       1.732      8.34
+               Sarraj et al. |          1.680       1.242       2.273      6.37
+                             |
+                  exp(theta) |          1.477       1.176       1.855
+-----------------------------+-------------------------------------------------
+Group: Core Volume <70 mL    |
+                  Huo et al. |          1.370       1.038       1.807      7.58
+               Sarraj et al. |          1.390       0.932       2.074      3.64
+                             |
+                  exp(theta) |          1.376       1.096       1.729
+-----------------------------+-------------------------------------------------
+Group: Core Volume ≥70 mL    |
+                  Huo et al. |          1.370       0.981       1.913      5.23
+               Sarraj et al. |          1.620       1.244       2.110      8.34
+                             |
+                  exp(theta) |          1.519       1.235       1.868
+-----------------------------+-------------------------------------------------
+Group: ASPECTS <3            |
+                  Huo et al. |          1.590       0.887       2.850      1.71
+               Sarraj et al. |          1.400       0.909       2.157      3.12
+                             |
+                  exp(theta) |          1.465       1.035       2.073
+-----------------------------+-------------------------------------------------
+Group: ASPECTS ≥3            |
+                  Huo et al. |          1.350       1.074       1.697     11.14
+ Sarraj et al. (ASPECTS 3-5) |          1.610       1.251       2.072      9.15
+Sarraj et al. (ASPECTS 6-10) |          1.240       0.649       2.368      1.39
+                             |
+                  exp(theta) |          1.446       1.228       1.704
+-----------------------------+-------------------------------------------------
+Overall                      |
+                  exp(theta) |          1.445       1.339       1.560
+-------------------------------------------------------------------------------
+
+Heterogeneity summary
+-----------------------------------------------------------------------------
+         Group |      df          Q   P > Q        tau2       % I2         H2
+---------------+-------------------------------------------------------------
+Time from st~m |       1       1.60   0.206       0.023      37.47       1.60
+Time from st~m |       1       0.02   0.891       0.000       0.00       1.00
+           ICA |       1       0.10   0.749       0.000       0.00       1.00
+           MCA |       1       1.30   0.254       0.006      23.12       1.30
+Core Volume ~L |       1       0.00   0.953       0.000       0.00       1.00
+Core Volume ~L |       1       0.60   0.440       0.000       0.00       1.00
+    ASPECTS <3 |       1       0.12   0.731       0.000       0.00       1.00
+    ASPECTS ≥3 |       2       1.26   0.532       0.000       0.00       1.00
+---------------+-------------------------------------------------------------
+       Overall |      16       6.18   0.986       0.000       0.00       1.00
+-----------------------------------------------------------------------------
+Test of group differences: Q_b = chi2(7) = 1.01            Prob > Q_b = 0.995
+
+. 
+. 
+. meta forestplot, random(reml) subgroup(subgroup)  noomarker  noohetstats noohomt
+> est noosigtest
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker 
+> nullrefline xscale(range(.25 4)) xlabel(#5) noomarker  noohetstats noohomtest no
+> osigtest nogwhomtests nogbhomtests nullrefline(favorsleft("Favors medical treatm
+> ent", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+  Effect-size label: Odds Ratio
+        Effect size: logess
+          Std. err.: _meta_se
+        Study label: study
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Throm
+> bectomy SysRev/iatLargeStrokeMetaA.log
+  log type:  text
+ closed on:  23 Feb 2023, 14:34:20
+----------------------------------------------------------------------------------

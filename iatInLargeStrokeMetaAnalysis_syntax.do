@@ -44,10 +44,27 @@ meta set logess loglci loguci, civartolerance(1e-2) studylabel(study) studysize(
 *meta analysis
 meta summarize, random(reml) eform(Odds Ratio)
 
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
+
 meta forestplot, random(reml) eform(Odds Ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
+
 *publication. bias
+
 meta funnelplot, random(reml)
+
+meta summarize, random(reml) eform(Odds Ratio)
+display r(theta)
+scalar theta = r(theta)
+meta summarize, random(reml) eform(Odds Ratio) nostudies
+display r(theta)
+
+twoway function theta-1.96*x, horizontal range(0 0.258) || function theta+1.96*x, horizontal range(0 0.258)
+local opts horizontal range(0 0.258) lpattern(dash) lcolor("red") legend(order(1 2 3 4 5 6) label(6 "95% pseudo CI"))
+meta funnel, random(reml) contours(1 5 10) addplot(function theta-1.96*x, `opts' || function theta+1.96*x, `opts')
+
 
 meta bias, egger random(reml)
 
@@ -62,7 +79,7 @@ preserve
 clear
 frame reset
 
-use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+use iatLargeThrombectomyMetaAnalysis.dta
 
 meta set logess loglci loguci, civartolerance(1e-2) studylabel(study) studysize(number) eslabel(Odds Ratio)
 meta summarize, random(reml) eform(Odds Ratio)
@@ -98,7 +115,13 @@ meta esize iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1, esize(lnrrat
 
 meta summarize, random(reml) eform(Risk ratio)
 
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
+
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
+
 
 *--------------------*
 *Sensitivity Analysis*
@@ -108,7 +131,7 @@ preserve
 clear
 frame reset
 
-use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+use iatLargeThrombectomyMetaAnalysis.dta
 meta esize iatSuccess1 iatFailure1 medicalSuccess1 medicalFailure1, esize(lnrratio) studylabel(study) eslabel(Risk ratio)
 meta summarize, random(reml) eform(Risk ratio)
 
@@ -134,7 +157,6 @@ frame sens: scatter p tau2, name(p, replace)
 
 restore
 
-
 ***********************************
 **Independent Ambulation (mRs0-3)**
 ***********************************
@@ -144,7 +166,12 @@ meta esize iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2, esize(lnrrat
 
 meta summarize, random(reml) eform(Risk ratio)
 
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
+
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
 
 *--------------------*
 *Sensitivity Analysis*
@@ -154,7 +181,7 @@ preserve
 clear
 frame reset
 
-use "/Users/dago_estevez/Desktop/Dago/PhD/Clinical Research/Harrigan Thrombectomy SysRev/iatLargeThrombectomyMetaAnalysis.dta"
+use iatLargeThrombectomyMetaAnalysis.dta
 
 meta esize iatSuccess2 iatFailure2 medicalSuccess2 medicalFailure2, esize(lnrratio) studylabel(study) eslabel(Risk ratio)
 meta summarize, random(reml) eform(Risk ratio)
@@ -191,13 +218,20 @@ meta esize iatICH_sym iatNoICH_sym medicalICH_sym medicalNoICH_sypm, esize(lnrra
 
 meta summarize, random(reml) eform(Risk ratio)
 
-meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
 
+meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
 *Any ICH
 meta esize iatAnyICH iatNoAnyICH medicalAnyICH medicalNoAnyICH, esize(lnrratio) studylabel(study) eslabel(Risk ratio)
 
 meta summarize, random(reml) eform(Risk ratio)
+
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
 
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.25 4)) xlabel(#6) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
@@ -206,12 +240,20 @@ meta esize iatDeath90 iatNoDeath90 medicalDeath90 medicalNoDeath90, esize(lnrrat
 
 meta summarize, random(reml) eform(Risk ratio)
 
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
+
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.25 4)) xlabel(#6) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
 *Decompressive Hemicraniectomy
 meta esize iatDHC iatNoDHC medicalDHC medicalNoDHC, esize(lnrratio) studylabel(study) eslabel(Risk ratio)
 
 meta summarize, random(reml) eform(Risk ratio)
+
+*bonferroni correction (1 primary outcome + 2 secondary outcomes + 4 safety outcomes)
+display r(p)
+display r(p)*7
 
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.25 4)) xlabel(#6) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
@@ -243,5 +285,6 @@ meta summarize, random(reml) subgroup(subgroup) eform(Odds ratio)
 
 meta forestplot, random(reml) subgroup(subgroup)  noomarker  noohetstats noohomtest noosigtest
 
-meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker nullrefline xscale(range(.25 4)) meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker nullrefline xscale(range(.25 4)) xlabel(#5) noomarker  noohetstats noohomtest noosigtest nogwhomtests nogbhomtests nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
+meta forestplot, random(reml) eform(Odds ratio) subgroup(subgroup) insidemarker nullrefline xscale(range(.25 4)) xlabel(#5) noomarker  noohetstats noohomtest noosigtest nogwhomtests nogbhomtests nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
+
 log close
