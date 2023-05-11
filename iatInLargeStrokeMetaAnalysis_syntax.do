@@ -120,7 +120,8 @@ display r(p)*7
 
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
-
+*Calculating NNT, bcii a b c d (a - iat successes, b - medical therapy successes, c- iat failures, d- medical therapy failures)
+bcii 119 46 388 452
 
 *--------------------*
 *Sensitivity Analysis*
@@ -171,6 +172,8 @@ display r(p)*7
 
 meta forestplot, random(reml) eform(Risk ratio) insidemarker nullrefline noohomtest xscale(range(.125 8)) xlabel(#7) nullrefline(favorsleft("Favors medical treatment", size(small)) favorsright("Favors thrombectomy", size(small)))
 
+*Calculating NNT, bcii a b c d (a - iat successes, b - medical therapy successes, c- iat failures, d- medical therapy failures)
+bcii 206 120 301 378
 
 *--------------------*
 *Sensitivity Analysis*
