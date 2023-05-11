@@ -1,4 +1,4 @@
 # Thrombectomy-in-Large-Volume-Strokes-SysRev-Metan
-/Meta-Analysis for RCTs looking at thrombectomy in patients Large Volume Strokes
+Meta-Analysis for RCTs looking at thrombectomy in patients Large Volume Strokes
 
-/The repository contains databases from extraction following Systematic Review for the proposed study. Also contains syntax used for analysis in STATA17 and R
+The repository contains databases from extraction following Systematic Review for the proposed study. Also contains syntax used for analysis in STATA17 and R
